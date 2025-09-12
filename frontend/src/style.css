@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+body {
+	min-height: 100vh;
+	background: linear-gradient(135deg, #000000 0%, #4A4A4A 100%);
+}
+@theme {
+  --color-midnight: #515151;
+  --color-inputs: #232323;
+  --color-inputs-hover: #A1A1A1;
+}
