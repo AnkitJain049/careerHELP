@@ -66,9 +66,6 @@ const LoginPage = () => {
         careerHELP
       </h1>
   <div className="bg-midnight p-4 rounded-lg shadow-lg max-w-md w-full">
-        <div className="flex justify-center mb-6">
-          <div className="w-16 h-16 rounded-full bg-inputs"></div>
-        </div>
 
         <div className="flex mb-6">
           <button
