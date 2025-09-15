@@ -23,14 +23,16 @@ export const setAuthCookies = (res, accessToken, refreshToken) => {
   const isProd = process.env.NODE_ENV === 'production';
   res.cookie('access_token', accessToken, {
     httpOnly: true,
-    secure: isProd,
-    sameSite: isProd ? 'none' : 'lax',
+    secure: true, // Always secure for cross-origin
+    sameSite: 'None', // Always None for cross-origin
+    path: '/',
     maxAge: 15 * 60 * 1000,
   });
   res.cookie('refresh_token', refreshToken, {
     httpOnly: true,
-    secure: isProd,
-    sameSite: isProd ? 'none' : 'lax',
+    secure: true,
+    sameSite: 'None',
+    path: '/',
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 };
