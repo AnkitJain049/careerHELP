@@ -27,6 +27,10 @@ const Login = ({ onSuccess, onError }) => {
           email: data.user.email,
           authenticated: true
         }));
+        // Persist access token for Authorization header fallback (Edge blocks cross-site cookies by default)
+        if (data.accessToken) {
+          localStorage.setItem('access_token', data.accessToken);
+        }
       }
       onSuccess?.('Logged in successfully.');
       navigate('/home');

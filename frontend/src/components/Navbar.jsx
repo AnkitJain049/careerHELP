@@ -11,11 +11,14 @@ const Navbar = () => {
   };
 
   const handleLogoutConfirm = async () => {
+    const token = localStorage.getItem('access_token');
     await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/logout`, {
       method: 'POST',
       credentials: 'include',
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
     });
     localStorage.removeItem('user');
+    localStorage.removeItem('access_token');
     setShowConfirm(false);
     navigate('/login', { replace: true });
   };

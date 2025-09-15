@@ -34,6 +34,9 @@ const Register = ({ onSuccess, onError }) => {
           email: data.user.email,
           authenticated: true
         }));
+        if (data.accessToken) {
+          localStorage.setItem('access_token', data.accessToken);
+        }
       }
       onSuccess?.('Registered successfully.');
       navigate('/home');

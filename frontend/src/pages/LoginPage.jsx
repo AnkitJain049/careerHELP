@@ -46,6 +46,13 @@ const LoginPage = () => {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Google login failed');
+      // Persist token and user for Authorization header usage
+      if (data?.accessToken) {
+        localStorage.setItem('access_token', data.accessToken);
+      }
+      if (data?.user) {
+        localStorage.setItem('user', JSON.stringify(data.user));
+      }
       setMessage('Google login successful!');
       navigate('/home');
     } catch (err) {

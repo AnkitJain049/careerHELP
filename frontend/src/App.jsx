@@ -24,8 +24,10 @@ const App = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        const token = localStorage.getItem('access_token');
         const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/me`, {
           credentials: 'include',
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
         });
         setIsAuthenticated(res.ok);
       } catch {
