@@ -20,11 +20,11 @@ const InterviewPrep = () => {
     setCurrentQuestionIndex(0);
     setUserAnswers({});
     try {
+      const token = localStorage.getItem('access_token');
       const response = await fetch(`${API_BASE}/api/interview-prep`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        credentials: 'include',
+        headers: token ? { "Content-Type": "application/json", Authorization: `Bearer ${token}` } : { "Content-Type": "application/json" },
         body: JSON.stringify({
           experience,
           position: technology,
