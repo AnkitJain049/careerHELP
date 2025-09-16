@@ -31,19 +31,40 @@ const InterviewPrep = () => {
         }),
       });
       const data = await response.json();
-      let questions = data.questions;
-      // If questions is a string, try to parse it
-      console.log("Fetched questions:", questions);
-      if (typeof questions === "string") {
-        try {
-          questions = JSON.parse(questions);
-        } catch (e) {
-          questions = [];
+
+      // Robustly extract an array of question objects from possibly noisy text
+      let raw = data.questions;
+      console.log("Fetched questions:", raw);
+
+      const tryParseArray = (text) => {
+        if (typeof text !== "string") return Array.isArray(text) ? text : [];
+        // Remove fenced code blocks while keeping inner content
+        let cleaned = text
+          .replace(/^```json\s*[\r\n]?/i, "")
+          .replace(/^```\w*\s*[\r\n]?/i, "")
+          .replace(/```\s*$/i, "");
+        // If still contains prose, attempt to extract first JSON array
+        let match = cleaned.match(/\[[\s\S]*\]/);
+        if (match) {
+          try {
+            return JSON.parse(match[0]);
+          } catch (_) {
+            // fall through
+          }
         }
-      }
+        // Last attempt: direct parse
+        try {
+          return JSON.parse(cleaned);
+        } catch (_) {
+          return [];
+        }
+      };
+
+      let parsed = tryParseArray(raw);
+
       // Normalize options to have text and isCorrect
-      questions = Array.isArray(questions)
-        ? questions.map((q, idx) => ({
+      const normalized = Array.isArray(parsed)
+        ? parsed.map((q, idx) => ({
             id: idx + 1,
             question: q.question,
             options: Array.isArray(q.options)
@@ -54,7 +75,8 @@ const InterviewPrep = () => {
               : [],
           }))
         : [];
-      setQuestions(questions);
+
+      setQuestions(normalized);
       setCurrentQuestionIndex(0);
       setUserAnswers({});
     } catch (error) {
