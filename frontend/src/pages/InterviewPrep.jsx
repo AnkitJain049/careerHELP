@@ -1,8 +1,10 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
+import useAuthCheck from "../hooks/useAuthCheck";
 
 const InterviewPrep = () => {
+  useAuthCheck();
   const [technology, setTechnology] = useState("");
   const [experience, setExperience] = useState("");
   const [isLoading, setIsLoading] = useState(false);

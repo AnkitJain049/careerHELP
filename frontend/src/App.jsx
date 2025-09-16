@@ -9,10 +9,33 @@ import JobApplicationPage from './pages/JobApplicationPage.jsx';
 import RoadmapPage from './pages/RoadmapPage.jsx';
 
 
-// Simple wrapper for protected route
+// Real ProtectedRoute: checks /api/auth/me before rendering
 const ProtectedRoute = ({ children }) => {
-  // This will be checked inside HomePage itself, so just render children
-  return children;
+  const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+  const [checked, setChecked] = React.useState(false);
+  const [ok, setOk] = React.useState(false);
+  React.useEffect(() => {
+    let cancelled = false;
+    const run = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/me`, {
+          credentials: 'include',
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        });
+        if (!cancelled) {
+          setOk(res.ok);
+        }
+      } catch {
+        if (!cancelled) setOk(false);
+      } finally {
+        if (!cancelled) setChecked(true);
+      }
+    };
+    run();
+    return () => { cancelled = true; };
+  }, [token]);
+  if (!checked) return null;
+  return ok ? children : <Navigate to="/login" replace />;
 };
 
 import React, { useEffect, useState } from 'react';
@@ -50,9 +73,21 @@ const App = () => {
           <HomePage />
         </ProtectedRoute>
       } />
-  <Route path="/interview-prep" element={<InterviewPrep />} />
-  <Route path="/cover-letter" element={<CoverLetterPage />} />
-  <Route path="/job-application" element={<JobApplicationPage />} />
+      <Route path="/interview-prep" element={
+        <ProtectedRoute>
+          <InterviewPrep />
+        </ProtectedRoute>
+      } />
+      <Route path="/cover-letter" element={
+        <ProtectedRoute>
+          <CoverLetterPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/job-application" element={
+        <ProtectedRoute>
+          <JobApplicationPage />
+        </ProtectedRoute>
+      } />
   <Route path="/roadmaps" element={<RoadmapPage />} />
   <Route path="/protected" element={<ProtectedPage />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
